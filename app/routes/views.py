@@ -1,12 +1,13 @@
 import datetime
 import os
 import uuid
-
+from app.routes.posenet.test import Pose
 from threading import Thread
 from PIL import Image
 from flask import request, jsonify
 
 from app import db, app
+from app.models import User
 
 from app.routes.login import Login
 from app.routes.createId import IdWorker
@@ -46,6 +47,18 @@ def login():
     except:
         pass
     return openid['openid']
+
+@home.route('/posenet/',methods = ["POST"])
+def posenet():
+    img = request.files["imgfile"]
+    img.save(app.config["UP_DIR"]+img.filename)
+    pose = Pose()
+    dic = pose.pose(app.config["UP_DIR"]+img.filename)
+    return jsonify(dic)
+
+
+
+
 
 
 
