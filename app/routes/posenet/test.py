@@ -5,7 +5,7 @@ from app import app
 
 
 class Pose():
-    def pose(self,url,acc=0.27):
+    def pose(self,url,acc=0.25):
         BODY_PARTS = {"Nose": 0, "Neck": 1, "RShoulder": 2, "RElbow": 3, "RWrist": 4,
                       "LShoulder": 5, "LElbow": 6, "LWrist": 7, "RHip": 8, "RKnee": 9,
                       "RAnkle": 10, "LHip": 11, "LKnee": 12, "LAnkle": 13, "REye": 14,
