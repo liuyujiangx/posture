@@ -5,7 +5,7 @@ from app import app
 
 
 class Pose():
-    def pose(self,url):
+    def pose(self,url,acc=0.2):
         BODY_PARTS = {"Nose": 0, "Neck": 1, "RShoulder": 2, "RElbow": 3, "RWrist": 4,
                       "LShoulder": 5, "LElbow": 6, "LWrist": 7, "RHip": 8, "RKnee": 9,
                       "RAnkle": 10, "LHip": 11, "LKnee": 12, "LAnkle": 13, "REye": 14,
@@ -40,7 +40,7 @@ class Pose():
             x = (inWidth * point[0]) / out.shape[3]
             y = (inHeight * point[1]) / out.shape[2]
             # Add a point if it's confidence is higher than threshold.
-            points.append((int(x), int(y)))
+            points.append((int(x), int(y)) if conf > acc else None)
         paintPose = []
         for pair in POSE_PAIRS:
             partFrom = pair[0]
