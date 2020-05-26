@@ -87,7 +87,7 @@ def img_compress(from_src, save_src):
 
 
 # 多线程
-def async_slow_function(file_path, filename, num):
-    thr = Thread(target=change, args=[file_path, filename, num])
-    thr.start()
-    return thr
+# def async_slow_function(file_path, filename, num):
+#     thr = Thread(target=change, args=[file_path, filename, num])
+#     thr.start()
+#     return thr
