@@ -38,7 +38,7 @@ def login():
     openid = log.sent_out()
     try:
         user = User(
-            userid=idword.get_id(),
+            id=idword.get_id(),
             username=res['userName'],
             face=res['userUrl'],
             money = 0,
