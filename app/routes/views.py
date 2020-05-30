@@ -49,7 +49,7 @@ def login():
         )
         db.session.add(user)
         db.session.commit()
-    return openid['openid']
+    return jsonify({"isLogin":"ture","openid":openid['openid']})
 
 
 @home.route('/posenet/', methods=["POST"])
