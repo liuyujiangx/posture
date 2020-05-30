@@ -36,7 +36,7 @@ idword = IdWorker()
 @home.route('/login/', methods=['GET'])
 def login():
     res = request.args.to_dict()
-    log.set(res['code'])
+    log.set(res['coxde'])
     openid = log.sent_out()
     usercount = User.query.filter_by(uuid=openid['openid']).count()
     if usercount != 1:
