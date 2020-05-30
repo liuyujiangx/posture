@@ -30,7 +30,7 @@ def index():
 
 log = Login()
 
-
+idword = IdWorker()
 @home.route('/login/', methods=['GET'])
 def login():
     res = request.args.to_dict()
@@ -38,9 +38,11 @@ def login():
     openid = log.sent_out()
     try:
         user = User(
-            userid=openid['openid'],
-            username=res['username'],
-            userurl=res['userurl']
+            userid=idword.get_id(),
+            username=res['userName'],
+            face=res['userUrl'],
+            money = 0,
+            uuid = openid['openid']
         )
         db.session.add(user)
         db.session.commit()
