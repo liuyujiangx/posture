@@ -31,37 +31,34 @@ def index():
 log = Login()
 
 idword = IdWorker()
+
+
 @home.route('/login/', methods=['GET'])
 def login():
     res = request.args.to_dict()
     log.set(res['code'])
     openid = log.sent_out()
-    try:
+    usercount = User.query.filter_by(uuid=openid['openid']).count()
+    if usercount != 1:
         user = User(
             id=idword.get_id(),
             username=res['userName'],
             face=res['userUrl'],
-            money = 0,
-            uuid = openid['openid']
+            money=0,
+            uuid=openid['openid']
         )
         db.session.add(user)
         db.session.commit()
-    except:
-        pass
     return openid['openid']
 
-@home.route('/posenet/',methods = ["POST"])
+
+@home.route('/posenet/', methods=["POST"])
 def posenet():
     img = request.files["imgfile"]
-    img.save(app.config["UP_DIR"]+img.filename)
+    img.save(app.config["UP_DIR"] + img.filename)
     pose = Pose()
-    dic = pose.pose(app.config["UP_DIR"]+img.filename)
+    dic = pose.pose(app.config["UP_DIR"] + img.filename)
     return jsonify(dic)
-
-
-
-
-
 
 
 # 获取文件大小（KB）
@@ -86,7 +83,6 @@ def img_compress(from_src, save_src):
     img.save(save_src, optimize=True, quality=85)  # 质量为85效果最好
     if get_img_kb(save_src) > 60:
         img.save(save_src, optimize=True, quality=75)
-
 
 # 多线程
 # def async_slow_function(file_path, filename, num):
