@@ -41,7 +41,6 @@ def login():
     usercount = User.query.filter_by(uuid=openid['openid']).count()
     if usercount != 1:
         user = User(
-            id=idword.get_id(),
             username=res['userName'],
             face=res['userUrl'],
             money=0,
