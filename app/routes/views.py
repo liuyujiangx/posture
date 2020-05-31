@@ -65,20 +65,20 @@ def posenet():
 @home.route('/article/upload/', methods=['POST'])
 def article_upload():
     img = request.files['imgfile']
-    img_filename = change_filename(img.filename)
-    save_url = app.config["UP_DIR"]+"upload/"+ img_filename
-    img.save(save_url)
-    zoom(save_url,save_url)#压缩图片
+    img_filename = change_filename(img.filename)  # 更改图片名称
+    save_url = app.config["UP_DIR"] + "upload/" + img_filename  # 图片保存地址
+    img.save(save_url)  # 保存图片
+    zoom(save_url, save_url)  # 压缩图片
     data = request.form.to_dict()
     user = User.query.filter_by(uuid=data['userid']).first()
     dic = {"arr": ""}
-    if data['isPose']:
+    if data['isPose']:  # 判断是否需要姿势点
         dic = pose.pose(app.config["UP_DIR"] + img.filename)
     article = Article(
         title=data["title"],
         content=data["content"],
         spotid=data["spotid"],
-        img = "http://www.yujl.top:5052/upload/"+img_filename,
+        img="http://www.yujl.top:5052/upload/" + img_filename,
         postpoint=dic["arr"],
         weather=data["weather"],
         userid=user.id,
@@ -88,7 +88,7 @@ def article_upload():
     db.session.add(article)
     db.session.commit()
 
-    return jsonify({"code":1})
+    return jsonify({"code": 1})
 
 
 '''
