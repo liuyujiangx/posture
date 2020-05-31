@@ -12,6 +12,7 @@ class Article(db.Model):
     userid = db.Column(db.Integer)
     good = db.Column(db.Integer)  # 点赞数
     weather = db.Column(db.String)  # 天气
+    poseimg = db.Column(db.String)  #
     postpoint = db.Column(db.String)  # 姿势点
     scaling = db.Column(db.String)  # 缩放比
     time = db.Column(db.DateTime)  # 添加时间
