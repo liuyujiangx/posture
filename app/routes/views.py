@@ -60,6 +60,17 @@ def posenet():
     return jsonify(dic)
 
 
+@home.route('/article/upload/',methods = ['POST'])
+def article_upload():
+    img = request.files['imgfile']
+    data = request.form.to_dict()
+    print(data)
+    print(img.filename)
+    return 'hello'
+
+
+
+
 # 获取文件大小（KB）
 def get_img_kb(filePath):
     # filePath图片地址（包含图片本身）
