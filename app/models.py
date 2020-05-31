@@ -15,7 +15,7 @@ class Article(db.Model):
     poseimg = db.Column(db.String)  #
     postpoint = db.Column(db.String)  # 姿势点
     scaling = db.Column(db.String)  # 缩放比
-    time = db.Column(db.DateTime)  # 添加时间
+    time = db.Column(db.String)  # 添加时间
 
     def __repr__(self):
         return "<Spotinf %r>" % self.id
