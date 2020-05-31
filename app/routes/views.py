@@ -73,7 +73,7 @@ def article_upload():
     user = User.query.filter_by(uuid=data['userid']).first()
     dic = {"arr": ""}
     if data['isPose']:  # 判断是否需要姿势点
-        dic = pose.pose(app.config["UP_DIR"] + "upload/" + img.filename)
+        dic = pose.pose(save_url)
     article = Article(
         title=data["title"],
         content=data["content"],
