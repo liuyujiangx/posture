@@ -9,7 +9,6 @@ import os
 app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://root:1914571065lyj@localhost:3306/posture'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
-app.config['SQLALCHEMY_ECHO'] = True
 app.config["SECRET_KEY"] = '235c749859ec44c2bd6064ec6da7b927'
 app.config["UP_DIR"] = os.path.join(os.path.abspath(os.path.dirname(__file__)), "static/")
 app.debug = True
