@@ -7,11 +7,11 @@ from PIL import Image
 from flask import request, jsonify
 
 from app import db, app
-from app.models import User
+from app.models import User, Article
 
 from app.routes.login import Login
 from app.routes.createId import IdWorker
-
+from app.routes.img_zoom import zoom
 from . import home
 
 
@@ -48,27 +48,55 @@ def login():
         )
         db.session.add(user)
         db.session.commit()
-    return jsonify({"isLogin":"ture","openid":openid['openid']})
+    return jsonify({"isLogin": "ture", "openid": openid['openid']})
+
+
+pose = Pose()
 
 
 @home.route('/posenet/', methods=["POST"])
 def posenet():
     img = request.files["imgfile"]
     img.save(app.config["UP_DIR"] + img.filename)
-    pose = Pose()
     dic = pose.pose(app.config["UP_DIR"] + img.filename)
     return jsonify(dic)
 
 
-@home.route('/article/upload/',methods = ['POST'])
+@home.route('/article/upload/', methods=['POST'])
 def article_upload():
     img = request.files['imgfile']
+    img_filename = change_filename(img.filename)
+    save_url = app.config["UP_DIR"]+"upload/"+ img_filename
+    img.save(save_url)
+    zoom(save_url,save_url)#压缩图片
     data = request.form.to_dict()
-    print(data)
-    print(img.filename)
-    return 'hello'
+    user = User.query.filter_by(uuid=data['userid']).first()
+    dic = {"arr": ""}
+    if data['isPose']:
+        dic = pose.pose(app.config["UP_DIR"] + img.filename)
+    article = Article(
+        title=data["title"],
+        content=data["content"],
+        spotid=data["spotid"],
+        img = "http://www.yujl.top:5052/upload/"+img_filename,
+        postpoint=dic["arr"],
+        weather=data["weather"],
+        userid=user.id,
+        good=0,
+        time=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
+    )
+    db.session.add(article)
+    db.session.commit()
+
+    return jsonify({"code":1})
 
 
+'''
+{'title': 'awdawd', 'content': 'awfdawd', 'isPose': '[object Boolean]', 'spotid'
+: '110101', 'posepoint': '[object Null]', 'weather': '[object Object]', 'userid'
+: 'ov7vI5SY49ssAlJU32azqnLQAgfw'}
+
+'''
 
 
 # 获取文件大小（KB）
