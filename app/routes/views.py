@@ -79,7 +79,7 @@ def article_upload():
         content=data["content"],
         spotid=data["spotid"],
         img="http://www.yujl.top:5052/upload/" + img_filename,
-        postpoint=dic["arr"],
+        postpoint=str(dic["arr"]),
         weather=data["weather"],
         userid=user.id,
         good=0,
