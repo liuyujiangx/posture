@@ -2,10 +2,10 @@ from . import admin
 from flask import render_template, request, jsonify
 
 
-@admin.route('/article/')
+@admin.route('/')
 def article():
     print("hello")
-    return render_template('article.html')
+    return render_template('index.html')
 
 @admin.route('/article/delete/')
 def article_delete():

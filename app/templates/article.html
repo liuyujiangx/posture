@@ -1,61 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>文章</title>
-    <link rel="stylesheet" href="{{url_for('static',filename='layui/css/layui.css')}}" media="all">
-</head>
-<body>
-<table>
-    <table id="demo" lay-filter="test"></table>
 
-    <script src="{{url_for('static',filename='layui/layui.js')}}"></script>
-    <script type="text/html" id="toolbarDemo">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除</button>
-        </div>
-    </script>
+	<head>
+		<meta charset="UTF-8">
+		<title>文章</title>
+		<link rel="stylesheet" href="{{url_for('static',filename='layui/css/layui.css')}}" media="all">
+	</head>
 
-    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+	<body>
+		
+		<table>
+			
+			<table id="demo" lay-filter="test"></table>
 
-    <script type="text/html" id="currentTableBar">
+			<script src="{{url_for('static',filename='layui/layui.js')}}"></script>
+			<script type="text/html" id="toolbarDemo">
+				<div class="layui-btn-container">
+					<button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加</button>
+					<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除</button>
+				</div>
+			</script>
 
-        <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
-    </script>
-    <script>
-layui.use(['table','form','element'], function(){
-  var table = layui.table,
-      form = layui.form;
+			<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
-  //第一个实例
-  table.render({
-    elem: '#demo'
-    ,height: 480
-    ,url: '{{url_for('home.get_article')}}' //数据接口
-    ,page: true //开启分页
-    ,cols: [[ //表头
-      {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-      ,{field: 'title', title: '标题', width:80}
-      ,{field: 'content', title: '内容', width:80}
-      ,{field: 'img', title: '图片', width:80,templet: proofurl}
-      ,{field: 'keyword', title: '关键词', width: 177}
-      ,{field: 'spotid', title: '景点名', width: 100, sort: true}
-      ,{field: 'userid', title: '用户名', width: 100, sort: true}
-      ,{field: 'good', title: '点赞数', width: 80}
-      ,{field: 'weather', title: '天气', width: 80}
-      ,{field: 'time', title: '添加时间', width: 135, sort: true}
-      ,{field: 'postpoint', title: '姿势点', width: 135}
-      ,{field: 'scaling', title: '缩放比', width: 80}
-      ,{field: 'poseimg', title: '姿势图', width: 80}
-      ,{title:'操作',width: 80,toolbar: '#currentTableBar',align: "center"}
-    ]]
-  });
-  function proofurl(d){
-        	var proofurl = d.img;
-        	return "<a target='_Blank' class='layui-blue' href='"+proofurl+"'>链接</a>"
-        };
-  table.on('toolbar(currentTableFilter)', function(obj) {
+			<script type="text/html" id="currentTableBar">
+
+				<a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+			</script>
+			<script>
+				layui.use(['table', 'form', 'element'], function() {
+					var table = layui.table,
+						form = layui.form;
+
+					//第一个实例
+					table.render({
+						elem: '#demo',
+						height: 480,
+						url: '{{url_for('home.get_article')}}' //数据接口
+						,
+						page: true //开启分页
+							,
+						cols: [
+							[ //表头
+								{
+									field: 'id',
+									title: 'ID',
+									width: 80,
+									sort: true,
+									fixed: 'left'
+								}, {
+									field: 'title',
+									title: '标题',
+									width: 80
+								}, {
+									field: 'content',
+									title: '内容',
+									width: 80
+								}, {
+									field: 'img',
+									title: '图片',
+									width: 80,
+									templet: proofurl
+								}, {
+									field: 'keyword',
+									title: '关键词',
+									width: 177
+								}, {
+									field: 'spotid',
+									title: '景点名',
+									width: 100,
+									sort: true
+								}, {
+									field: 'userid',
+									title: '用户名',
+									width: 100,
+									sort: true
+								}, {
+									field: 'good',
+									title: '点赞数',
+									width: 80
+								}, {
+									field: 'weather',
+									title: '天气',
+									width: 80
+								}, {
+									field: 'time',
+									title: '添加时间',
+									width: 135,
+									sort: true
+								}, {
+									field: 'postpoint',
+									title: '姿势点',
+									width: 135
+								}, {
+									field: 'scaling',
+									title: '缩放比',
+									width: 80
+								}, {
+									field: 'poseimg',
+									title: '姿势图',
+									width: 80
+								}, {
+									title: '操作',
+									width: 80,
+									toolbar: '#currentTableBar',
+									align: "center"
+								}
+							]
+						]
+					});
+
+					function proofurl(d) {
+						var proofurl = d.img;
+						return "<a target='_Blank' class='layui-blue' href='" + proofurl + "'>链接</a>"
+					};
+					table.on('toolbar(currentTableFilter)', function(obj) {
 						if(obj.event === 'add') { // 监听添加操作
 							var content = miniPage.getHrefContent('{{url_for('home.get_article')}}');
 							var openWH = miniPage.getOpenWidthHeight();
@@ -103,10 +162,10 @@ layui.use(['table','form','element'], function(){
 							}, 'data');
 						}
 					});
-    table.on('tool(currentTableFilter)', function(obj) {
-			var data = obj.data;
-			if(obj.event === 'delete') {
-			layer.confirm('真的删除行么', function(index) {
+					table.on('tool(currentTableFilter)', function(obj) {
+						var data = obj.data;
+						if(obj.event === 'delete') {
+							layer.confirm('真的删除行么', function(index) {
 								//								obj.del();
 								$.post("{{url_for('home.get_article')}}", JSON.stringify([obj.data]), function(res) {
 									if(res.code == 1) {
@@ -132,15 +191,12 @@ layui.use(['table','form','element'], function(){
 								}, 'json');
 								layer.close(index);
 							});
-			}
-	})
+						}
+					})
 
+				});
+			</script>
+		</table>
+	</body>
 
-});
-
-
-
-    </script>
-</table>
-</body>
 </html>

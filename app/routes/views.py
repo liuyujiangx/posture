@@ -99,6 +99,31 @@ def article_upload():
 
     return jsonify({"code": 1})
 
+# 文章上传
+@home.route('/article/add/', methods=['POST'])
+def article_add():
+    data = request.form.to_dict()
+    user = User.query.filter_by(uuid=data['userid']).first()
+    article = Article(
+        title=data["title"],
+        content=data["content"],
+        spotid=data["spotid"],
+        img=data["imgurl"],
+        postpoint=str(data["postpoint"]),
+        weather=data["weather"],
+        userid=user.id,
+        good=0,
+        time=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
+        keyword=data["keyword"]
+    )
+    db.session.add(article)
+    db.session.commit()
+
+    return jsonify({"code": 1})
+
+
+
+
 
 # 获取文章
 @home.route('/get/article/')
