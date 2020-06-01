@@ -91,7 +91,8 @@
 							}, {
 								field: 'poseimg',
 								title: '姿势图',
-								width: 80
+								width: 80,
+								templet: proofurl2
 							}, {
 								title: '操作',
 								width: 80,
@@ -104,6 +105,10 @@
 
 				function proofurl(d) {
 					var proofurl = d.img;
+					return "<a target='_Blank' class='layui-blue' href='" + proofurl + "'>链接</a>"
+				};
+				function proofurl2(d) {
+					var proofurl = d.poseimg;
 					return "<a target='_Blank' class='layui-blue' href='" + proofurl + "'>链接</a>"
 				};
 				table.on('toolbar(currentTableFilter)', function(obj) {

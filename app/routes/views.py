@@ -92,7 +92,8 @@ def article_upload():
         userid=user.id,
         good=0,
         time=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
-        keyword=data["keyword"]
+        keyword=data["keyword"],
+        poseimg = "http://www.yujl.top:5052/upload/"+ "posture" + img_filename
     )
     db.session.add(article)
     db.session.commit()
