@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True,resources=r'/*')
 import os
 
-app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://root:1914571065lyj@localhost:3306/posture'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://myroot:1914571065lyj@47.95.235.93:3306/posture'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
 app.config["SECRET_KEY"] = '235c749859ec44c2bd6064ec6da7b927'
@@ -16,5 +16,6 @@ db = SQLAlchemy(app)
 
 
 from app.routes import home as home_blueprint
-
+from app.admin import admin as admin_blueprint
 app.register_blueprint(home_blueprint)
+app.register_blueprint(admin_blueprint, url_prefix="/admin/")
