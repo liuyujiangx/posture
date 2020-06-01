@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import uuid
 from app.routes.posenet.test import Pose
@@ -102,7 +103,8 @@ def article_upload():
 @home.route('/article/add/', methods=['POST'])
 def article_add():
     data = request.form.to_dict()
-    data1 = request.data.to_dict()
+    data1 = request.get_data()
+    data1 = json.loads(data1)
     print(data)
     print(data1)
     user = User.query.filter_by(uuid=data['userid']).first()
