@@ -102,11 +102,8 @@ def article_upload():
 # 文章上传
 @home.route('/article/add/', methods=['POST'])
 def article_add():
-    data = request.form.to_dict()
-    data1 = request.get_data()
-    data1 = json.loads(data1)
-    print(data)
-    print(data1)
+    data = request.get_data()
+    data = json.loads(data)
     user = User.query.filter_by(uuid=data['userid']).first()
     article = Article(
         title=data["title"],
