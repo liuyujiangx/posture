@@ -61,7 +61,7 @@ def posenet():
     imgname = change_filename(img.filename)
     img.save(app.config["UP_DIR"] + "upload/" + imgname)
     zoom(app.config["UP_DIR"] + "upload/" + imgname, app.config["UP_DIR"] + "upload/" + imgname)  # 压缩图片
-    dic = pose.pose(app.config["UP_DIR"] + img.filename, app.config["UP_DIR"] + "upload/" + "posture" + imgname)
+    dic = pose.pose(app.config["UP_DIR"]+ "upload/" + img.filename, app.config["UP_DIR"] + "upload/" + "posture" + imgname)
     return jsonify({
         "dic": dic,
         "img_url": "http://www.yujl.top:5052/upload/" + imgname,
