@@ -58,9 +58,15 @@ pose = Pose()
 @home.route('/posenet/', methods=["POST"])
 def posenet():
     img = request.files["imgfile"]
-    img.save(app.config["UP_DIR"] + img.filename)
-    dic = pose.pose(app.config["UP_DIR"] + img.filename)
-    return jsonify(dic)
+    imgname = change_filename(img.filename)
+    img.save(app.config["UP_DIR"] + "upload/" + imgname)
+    zoom(app.config["UP_DIR"] + "upload/" + imgname, app.config["UP_DIR"] + "upload/" + imgname)  # 压缩图片
+    dic = pose.pose(app.config["UP_DIR"] + img.filename, app.config["UP_DIR"] + "upload/" + "posture" + imgname)
+    return jsonify({
+        "dic": dic,
+        "img_url": "http://www.yujl.top:5052/upload/" + imgname,
+        "pose_url": "http://www.yujl.top:5052/upload/" + "posture" + imgname
+    })
 
 
 # 文章上传
@@ -75,7 +81,7 @@ def article_upload():
     user = User.query.filter_by(uuid=data['userid']).first()
     dic = {"arr": ""}
     if data['isPose']:  # 判断是否需要姿势点
-        dic = pose.pose(save_url)
+        dic = pose.pose(save_url, app.config["UP_DIR"] + "upload/" + "posture" + img_filename)
     article = Article(
         title=data["title"],
         content=data["content"],
@@ -93,7 +99,8 @@ def article_upload():
 
     return jsonify({"code": 1})
 
-#获取文章
+
+# 获取文章
 @home.route('/get/article/')
 def get_article():
     data = request.args.to_dict()
@@ -104,9 +111,9 @@ def get_article():
     articlecount = Article.query.count()
     return jsonify(
         {
-            "code":0,
+            "code": 0,
             "msg": "获取文章",
-            "count":articlecount,
+            "count": articlecount,
             "data": [
                 {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
                  "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
@@ -115,9 +122,6 @@ def get_article():
             ]
         }
     )
-
-
-
 
 # 多线程
 # def async_slow_function(file_path, filename, num):
