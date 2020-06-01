@@ -19,7 +19,6 @@ from . import home
 def change_filename(filename):
     fileinfo = os.path.splitext(filename)
     filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + str(uuid.uuid4().hex) + fileinfo[-1]
-    print(datetime.datetime.now().strftime("%Y%m%d"))
     return filename
 
 
@@ -79,7 +78,7 @@ def article_upload():
     zoom(save_url, save_url)  # 压缩图片
     data = request.form.to_dict()
     user = User.query.filter_by(uuid=data['userid']).first()
-    dic = {"arr": ""}
+    dic = {}
     if data['isPose']:  # 判断是否需要姿势点
         dic = pose.pose(save_url, app.config["UP_DIR"] + "upload/" + "posture" + img_filename)
     article = Article(
@@ -87,7 +86,7 @@ def article_upload():
         content=data["content"],
         spotid=data["spotid"],
         img="http://www.yujl.top:5052/upload/" + img_filename,
-        postpoint=str(dic["arr"]),
+        postpoint=str(dic),
         weather=data["weather"],
         userid=user.id,
         good=0,
@@ -103,6 +102,7 @@ def article_upload():
 @home.route('/article/add/', methods=['POST'])
 def article_add():
     data = request.form.to_dict()
+    print(data)
     user = User.query.filter_by(uuid=data['userid']).first()
     article = Article(
         title=data["title"],
