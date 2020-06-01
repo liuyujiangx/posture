@@ -54,6 +54,7 @@ def login():
 pose = Pose()
 
 
+# 获得姿势
 @home.route('/posenet/', methods=["POST"])
 def posenet():
     img = request.files["imgfile"]
@@ -62,6 +63,7 @@ def posenet():
     return jsonify(dic)
 
 
+# 文章上传
 @home.route('/article/upload/', methods=['POST'])
 def article_upload():
     img = request.files['imgfile']
@@ -91,37 +93,31 @@ def article_upload():
 
     return jsonify({"code": 1})
 
+#获取文章
+@home.route('/get/article/')
+def get_article():
+    data = request.args.to_dict()
+    if len(data) == 0:
+        data["page"] = 1
+        data["limit"] = 10
+    article = Article.query.order_by(Article.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
+    articlecount = Article.query.count()
+    return jsonify(
+        {
+            "code":0,
+            "msg": "获取文章",
+            "count":articlecount,
+            "data": [
+                {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
+                 "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
+                 "poseimg": item.poseimg,
+                 "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in article.items
+            ]
+        }
+    )
 
-'''
-{'title': 'awdawd', 'content': 'awfdawd', 'isPose': '[object Boolean]', 'spotid'
-: '110101', 'posepoint': '[object Null]', 'weather': '[object Object]', 'userid'
-: 'ov7vI5SY49ssAlJU32azqnLQAgfw'}
-
-'''
 
 
-# 获取文件大小（KB）
-def get_img_kb(filePath):
-    # filePath图片地址（包含图片本身）
-    fsize = os.path.getsize(filePath)
-    fsize = fsize / float(1024)
-
-    return round(fsize, 2)
-
-
-# 对图片进行压缩处理,w>512=>512
-def img_compress(from_src, save_src):
-    # from_src需要压缩的图片地址,save_src压缩后图片的保存地址。（地址中包含图片本身）
-    img = Image.open(from_src)
-    w, h = img.size
-    if w > 512:
-        h = h * (512 / w)
-        w = w * (512 / w)
-
-    img = img.resize((int(w), int(h)), Image.ANTIALIAS)
-    img.save(save_src, optimize=True, quality=85)  # 质量为85效果最好
-    if get_img_kb(save_src) > 60:
-        img.save(save_src, optimize=True, quality=75)
 
 # 多线程
 # def async_slow_function(file_path, filename, num):
