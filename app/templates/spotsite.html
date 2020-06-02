@@ -1,40 +1,62 @@
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='layui/css/layui.css')}}"/>
 <div class="layuimini-main">
+	<form class="layui-form" id="test" style="display:none">
+  <div class="layui-form-item">
+    <label class="layui-form-label">ID</label>
+    <div class="layui-input-block">
+      <input type="text" name="id" required  lay-verify="required" placeholder="请输入ID" autocomplete="on" class="layui-input" id="id" style="width:300px">
+    </div>
+    </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">景区</label>
+    <div class="layui-input-block">
+      <input type="text" name="name" required  lay-verify="required" placeholder="景区" autocomplete="on" class="layui-input" id="name" style="width:300px">
+    </div>
+  </div>
+    </div>
+</form>
+
 
 	<table>
 
-		<table id="demo" lay-filter="test"></table>
-
 		<script src="{{url_for('static',filename='layui/layui.js')}}"></script>
+		
 		<script type="text/html" id="toolbarDemo">
 			<div class="layui-btn-container">
-				<button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加</button>
-				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除</button>
+				<button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
 			</div>
 		</script>
 
 		<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
 		<script type="text/html" id="currentTableBar">
-
 			<a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
 		</script>
 		<script>
 			layui.use(['table', 'form', 'element'], function() {
 				var table = layui.table,
+					$ = layui.jquery,
+					miniPage = layui.miniPage,
 					form = layui.form;
 
 				//第一个实例
 				table.render({
-					elem: '#demo',
+					elem: '#currentTableId',
 					height: 480,
 					url: '{{url_for('home.get_spotsite')}}' //数据接口
 					,
 					page: true //开启分页
 						,
+					toolbar:'#toolbarDemo',
 					cols: [
 						[ //表头
 							{
+									type: "checkbox",
+									width: 50,
+									fixed: 'left'
+							},{
 								field: 'id',
 								title: 'ID',
 								width: 150,
@@ -44,69 +66,21 @@
 								field: 'name',
 								title: '景点',
 								width: 150
-							}, {
-								title: '操作',
-								width: 80,
-								toolbar: '#currentTableBar',
-								align: "center"
-							}
+							}, 
 						]
 					]
 				});
 				table.on('toolbar(currentTableFilter)', function(obj) {
-					if(obj.event === 'add') { // 监听添加操作
-						var content = miniPage.getHrefContent('{{url_for('home.get_article')}}');
-						var openWH = miniPage.getOpenWidthHeight();
-
-						var index = layer.open({
-							title: '添加用户',
-							type: 1,
-							shade: 0.2,
-							maxmin: true,
-							shadeClose: true,
-							area: [openWH[0] + 'px', openWH[1] + 'px'],
-							offset: [openWH[2] + 'px', openWH[3] + 'px'],
-							content: content,
-						});
-						$(window).on("resize", function() {
-							layer.full(index);
-						});
-					} else if(obj.event === 'delete') { // 监听删除操作
-						var checkStatus = table.checkStatus('currentTableId'),
-							data = checkStatus.data;
-						//layer.alert(JSON.stringify(data));
-						$.post("{{url_for('home.get_article')}}", JSON.stringify(data), function(res) {
-							if(res.code == 1) {
-								layer.msg(res.info, {
-									time: 2000
-								});
-								var url = "{{url_for('home.get_article')}}"; //
-								setTimeout(window.location.href = url, 2000);
-							} else {
-								layer.msg(res.info, {
-									time: 2000
-								});
-							}
-						}, 'json');
-						table.reload('currentTableId', {
-							page: {
-								curr: 1
-							},
-							where: {
-								key: {
-									page: 1,
-									limit: 10
-								}
-							}
-						}, 'data');
-					}
-				});
-				table.on('tool(currentTableFilter)', function(obj) {
 					var data = obj.data;
+					console.log("test");
+					console.log(obj);
 					if(obj.event === 'delete') {
 						layer.confirm('真的删除行么', function(index) {
-							//								obj.del();
-							$.post("{{url_for('home.get_article')}}", JSON.stringify([obj.data]), function(res) {
+							var checkStatus = table.checkStatus('currentTableId'),
+								data = checkStatus.data;
+							data = {"data":data}
+							$.post("{{url_for('admin.apotsite_del')}}", JSON.stringify(data), function(res) {
+								console.log(JSON.stringify(data));
 								if(res.code == 1) {
 									layer.msg(res.info, {
 										time: 2000
@@ -130,6 +104,55 @@
 							}, 'json');
 							layer.close(index);
 						});
+					}else if(obj.event === 'add'){
+						layer.open({
+							 type:1,
+							 area:['500px','300px'],
+							  title: 'tianxie'
+							  ,content: $("#test"),
+							  shade: 0,
+							  btn: ['提交', '取消']
+							  ,btn1: function(index, layero){
+							  var id=$("#id").val(),
+							      name=$("#name").val();
+							  var data = {"id":id,"name":name}
+							  console.log(data);
+							  $.post("{{url_for('admin.apotsite_add')}}", data, function(res) {
+								
+								if(res.code == 1) {
+									layer.msg(res.info, {
+										time: 2000
+									});
+									layer.closeAll();
+									table.reload('currentTableId', {
+										page: {
+											curr: 1
+										},
+										where: {
+											key: {
+												page: 1,
+												limit: 10
+											}
+										}
+									}, 'data');
+								} else {
+									layer.msg(res.info, {
+										time: 2000
+									});
+								}
+							}, 'json');
+							
+							  },
+							  btn2: function(index, layero){
+							   layer.closeAll();
+							  },
+							cancel: function(layero,index){ 
+							   layer.closeAll();
+							  }
+
+}); 
+
+
 					}
 				})
 

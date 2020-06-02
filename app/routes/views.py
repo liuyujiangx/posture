@@ -151,7 +151,7 @@ def get_article():
         }
     )
 
-# 获取文章
+# 获取景点
 @home.route('/get/spotsite/')
 def get_spotsite():
     data = request.args.to_dict()
@@ -167,6 +167,27 @@ def get_spotsite():
             "count": spotsitecount,
             "data": [
                 {"id": item.id, "name": item.name} for item in spotsite.items
+            ]
+        }
+    )
+
+
+# 获取用户
+@home.route('/get/user/')
+def get_user():
+    data = request.args.to_dict()
+    if len(data) == 0:
+        data["page"] = 1
+        data["limit"] = 10
+    user = User.query.order_by(User.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
+    usercount = User.query.count()
+    return jsonify(
+        {
+            "code": 0,
+            "msg": "获取景点",
+            "count": usercount,
+            "data": [
+                {"id": item.id, "username": item.username,"uuid":item.uuid,"face":item.face,"money":item.money} for item in user.items
             ]
         }
     )

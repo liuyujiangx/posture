@@ -1,0 +1,79 @@
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='layui/css/layui.css')}}"/>
+<div class="layuimini-main">
+	
+
+
+	<table>
+
+		<script src="{{url_for('static',filename='layui/layui.js')}}"></script>
+		<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+		<script>
+			layui.use(['table', 'form', 'element'], function() {
+				var table = layui.table,
+					$ = layui.jquery,
+					miniPage = layui.miniPage,
+					form = layui.form;
+
+				//第一个实例
+				table.render({
+					elem: '#currentTableId',
+					height: 480,
+					url: '{{url_for('home.get_user')}}' //数据接口
+					,
+					page: true //开启分页
+						,
+					cols: [
+						[ //表头
+							{
+								field: 'id',
+								title: 'ID',
+								width: 80,
+								sort: true,
+								fixed: 'left'
+							}, {
+								field: 'username',
+								title: '用户名',
+								width: 150
+							}, 
+							{
+								field: 'uuid',
+								title: '唯一标识符',
+								width: 150
+							}, 
+							{
+								field: 'face',
+								title: '头像',
+								width: 150,
+								templet:function(d){
+                return '<div οnclick="show_img(this)" ><img src="'+d.face+'" alt="" width="50px" height="50px"></a></div>';
+           }
+							},
+							{
+								field: 'money',
+								title: '账户余额',
+								width: 80
+							}, 
+						]
+					]
+				});
+				//显示大图片
+		        function show_img(t) {
+		            var t = $(t).find("img");
+		            console.log(t);
+		            //页面层
+		            layer.open({
+		                type: 1,
+		                skin: 'layui-layer-rim', //加上边框
+		                 area: ['80%', '80%'], //宽高
+		                shadeClose: true, //开启遮罩关闭
+		                end: function (index, layero) {
+		                    return false;
+		                },
+		                content: '<div style="text-align:center"><img src="' + $(t).attr('src') + '" /></div>'
+		            });
+		        }
+			});
+		</script>
+	</table>
+</div>

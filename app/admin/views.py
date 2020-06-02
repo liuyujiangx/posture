@@ -1,3 +1,7 @@
+import json
+
+from app import db
+from app.models import Article, Spotsite
 from . import admin
 from flask import render_template, request, jsonify
 
@@ -15,10 +19,50 @@ def article():
 @admin.route('/spotsite/')
 def spotsite():
     return render_template('spotsite.html')
+@admin.route('/user/')
+def user():
+    return render_template('user.html')
 
-
-@admin.route('/article/delete/')
+@admin.route('/article/delete/',methods=['POST'])
 def article_delete():
+    data = request.get_data()
+    data = json.loads(data)
+    for i in data["data"]:
+        article = Article.query.filter_by(id=i["id"]).first()
+        db.session.delete(article)
+        db.session.commit()
+
+    return jsonify({
+        "code":1,
+        "info":"删除成功"
+    })
+
+@admin.route('/spotsite/add/',methods=['POST'])
+def apotsite_add():
     data = request.form.to_dict()
-    print(data)
-    return jsonify('dad')
+    spotsite = Spotsite(
+        id = data["id"],
+        name = data["name"]
+    )
+    db.session.add(spotsite)
+    db.session.commit()
+    return jsonify({
+        "code":1,
+        "info":"添加成功"
+    }
+    )
+
+
+@admin.route('/spotsite/delete/',methods=['POST'])
+def apotsite_del():
+    data = request.get_data()
+    data = json.loads(data)
+    for i in data["data"]:
+        spotsite = Spotsite.query.filter_by(id=i["id"]).first()
+        db.session.delete(spotsite)
+        db.session.commit()
+    return jsonify({
+        "code":1,
+        "info":"删除成功"
+    }
+    )

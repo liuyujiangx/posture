@@ -3,42 +3,47 @@
 
 	<table>
 
-		<table id="demo" lay-filter="test"></table>
+		<!--<table id="demo" lay-filter="test"></table>-->
 
 		<script src="{{url_for('static',filename='layui/layui.js')}}"></script>
+		
 		<script type="text/html" id="toolbarDemo">
 			<div class="layui-btn-container">
-				<button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加</button>
-				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除</button>
+				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
 			</div>
 		</script>
 
 		<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
 		<script type="text/html" id="currentTableBar">
-
 			<a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
 		</script>
 		<script>
 			layui.use(['table', 'form', 'element'], function() {
 				var table = layui.table,
+					$ = layui.jquery,
 					form = layui.form;
 
 				//第一个实例
 				table.render({
-					elem: '#demo',
+					elem: '#currentTableId',
 					height: 480,
 					url: '{{url_for('home.get_article')}}',
 					page: true ,//开启分页
-					toolbar:true,
+					toolbar:'#toolbarDemo',
 					cols: [
 						[ //表头
+						{
+									type: "checkbox",
+									width: 50,
+									fixed: 'left'
+								},
 							{
 								field: 'id',
 								title: 'ID',
 								width: 80,
 								sort: true,
-								fixed: 'left'
+
 							}, {
 								field: 'title',
 								title: '标题',
@@ -51,7 +56,9 @@
 								field: 'img',
 								title: '图片',
 								width: 80,
-								templet: proofurl
+								templet:function(d){
+                return '<div οnclick="show_img(this)" ><img src="'+d.img+'" alt="" width="50px" height="50px"></a></div>';
+           }
 							}, {
 								field: 'keyword',
 								title: '关键词',
@@ -91,79 +98,27 @@
 								field: 'poseimg',
 								title: '姿势图',
 								width: 80,
-								templet: proofurl2
-							}, {
-								title: '操作',
-								width: 80,
-								toolbar: '#currentTableBar',
-								align: "center"
-							}
+								templet:function(d){
+                return '<div οnclick="show_img(this)" ><img src="'+d.poseimg+'" alt="" width="50px" height="50px"></a></div>';
+           }
+							}, 
+							
 						]
 					]
 				});
 
-				function proofurl(d) {
-					var proofurl = d.img;
-					return "<a target='_Blank' class='layui-blue' href='" + proofurl + "'>链接</a>"
-				};
-				function proofurl2(d) {
-					var proofurl = d.poseimg;
-					return "<a target='_Blank' class='layui-blue' href='" + proofurl + "'>链接</a>"
-				};
+				
 				table.on('toolbar(currentTableFilter)', function(obj) {
-					if(obj.event === 'add') { // 监听添加操作
-						var content = miniPage.getHrefContent('{{url_for('home.get_article')}}');
-						var openWH = miniPage.getOpenWidthHeight();
-
-						var index = layer.open({
-							title: '添加用户',
-							type: 1,
-							shade: 0.2,
-							maxmin: true,
-							shadeClose: true,
-							area: [openWH[0] + 'px', openWH[1] + 'px'],
-							offset: [openWH[2] + 'px', openWH[3] + 'px'],
-							content: content,
-						});
-						$(window).on("resize", function() {
-							layer.full(index);
-						});
-					} else if(obj.event === 'delete') { // 监听删除操作
-						var checkStatus = table.checkStatus('currentTableId'),
-							data = checkStatus.data;
-						//layer.alert(JSON.stringify(data));
-						$.post("{{url_for('home.get_article')}}", JSON.stringify(data), function(res) {
-							if(res.code == 1) {
-								layer.msg(res.info, {
-									time: 2000
-								});
-								var url = "{{url_for('home.get_article')}}"; //
-								setTimeout(window.location.href = url, 2000);
-							} else {
-								layer.msg(res.info, {
-									time: 2000
-								});
-							}
-						}, 'json');
-						table.reload('currentTableId', {
-							page: {
-								curr: 1
-							},
-							where: {
-								key: {
-									page: 1,
-									limit: 10
-								}
-							}
-						}, 'data');
-					}
-				});
-				table.on('tool(currentTableFilter)', function(obj) {
 					var data = obj.data;
+					console.log("test");
+					console.log(obj);
 					if(obj.event === 'delete') {
 						layer.confirm('真的删除行么', function(index) {
-							//								obj.del();
-							$.post("{{url_for('home.get_article')}}", JSON.stringify([obj.data]), function(res) {
+							var checkStatus = table.checkStatus('currentTableId'),
+								data = checkStatus.data;
+							data = {"data":data};
+							$.post("{{url_for('admin.article_delete')}}", JSON.stringify(data), function(res) {
+								
 								if(res.code == 1) {
 									layer.msg(res.info, {
 										time: 2000
