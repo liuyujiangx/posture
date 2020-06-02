@@ -197,7 +197,7 @@ def get_user():
     return jsonify(
         {
             "code": 0,
-            "msg": "获取景点",
+            "msg": "获取用户",
             "count": usercount,
             "data": [
                 {"id": item.id, "username": item.username,"uuid":item.uuid,
