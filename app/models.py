@@ -27,7 +27,7 @@ class Comment(db.Model):
     content = db.Column(db.String)
     articleid = db.Column(db.Integer)
     time = db.Column(db.String)
-    userid = db.Column(db.Integer)
+    userid = db.Column(db.Integer,db.ForeignKey('user.id'))
     def __repr__(self):
         return "<Comment %r>" % self.id
 
@@ -48,5 +48,6 @@ class User(db.Model):
     face = db.Column(db.String)
     rewardurl = db.Column(db.String)
     article = db.relationship("Article", backref='user')
+    comment = db.relationship("Comment", backref='user')
     def __repr__(self):
         return "<Comment %r>" % self.id
