@@ -82,6 +82,8 @@ def article_upload():
     dic = {}
     if data['isPose']:  # 判断是否需要姿势点
         print(data["isPose"])
+        print('\n'.join(['%s:%s' % item for item in data["isPose"].__dict__.items()]))
+
         dic = pose.pose(save_url, app.config["UP_DIR"] + "upload/" + "posture" + img_filename)
     article = Article(
         title=data["title"],
