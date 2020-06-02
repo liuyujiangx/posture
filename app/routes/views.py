@@ -150,11 +150,12 @@ def get_comment():
     if len(data) == 0:
         data["page"] = 1
         data["limit"] = 10
+        data["articleid"] = 40
     comment = Comment.query.filter_by(articleid=data["articleid"]).paginate(page=int(data["page"]), per_page=int(data["limit"]))
     return jsonify(
         {
             "code": 0,
-            "msg": "获取文章",
+            "msg": "获取评论",
             "data": [
                 {"id": item.id, "time": item.time, "content": item.content,
                  "username": item.user.username, "userimg": item.user.face,} for item in comment.items
