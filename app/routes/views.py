@@ -8,7 +8,7 @@ from PIL import Image
 from flask import request, jsonify
 from sqlalchemy import text
 from app import db, app
-from app.models import User, Article, Spotsite
+from app.models import User, Article, Spotsite, Comment
 
 from app.routes.login import Login
 from app.routes.createId import IdWorker
@@ -61,7 +61,7 @@ def posenet():
     imgname = change_filename(img.filename)
     img.save(app.config["UP_DIR"] + "upload/" + imgname)
     zoom(app.config["UP_DIR"] + "upload/" + imgname, app.config["UP_DIR"] + "upload/" + imgname)  # 压缩图片
-    dic = pose.pose(app.config["UP_DIR"]+ "upload/" + imgname, app.config["UP_DIR"] + "upload/" + "posture" + imgname)
+    dic = pose.pose(app.config["UP_DIR"] + "upload/" + imgname, app.config["UP_DIR"] + "upload/" + "posture" + imgname)
     return jsonify({
         "dic": dic,
         "img_url": "http://www.yujl.top:5052/upload/" + imgname,
@@ -91,14 +91,15 @@ def article_upload():
         weather=data["weather"],
         userid=user.id,
         good=0,
-        time=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
+        time=datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         keyword=data["keyword"],
-        poseimg = "http://www.yujl.top:5052/upload/"+ "posture" + img_filename
+        poseimg="http://www.yujl.top:5052/upload/" + "posture" + img_filename
     )
     db.session.add(article)
     db.session.commit()
 
     return jsonify({"code": 1})
+
 
 # 文章上传
 @home.route('/article/add/', methods=['POST'])
@@ -116,7 +117,7 @@ def article_add():
         weather=data["weather"],
         userid=user.id,
         good=0,
-        time=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
+        time=datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         keyword=data["keyword"]
     )
     db.session.add(article)
@@ -125,14 +126,41 @@ def article_add():
     return jsonify({"code": 1})
 
 
-
-@home.route("/add/comment/",methods=["POST"])
+# 添加评论
+@home.route("/add/comment/", methods=["POST"])
 def add_comment():
     data = request.get_data()
     data = json.loads(data)
     print(data)
-    return jsonify({"code":1})
+    user = User.query.filter_by(uuid = data["userid"]).first()
+    comment = Comment(
+        content=data["content"],
+        articleid=data["articleid"],
+        userid=user.id,
+        time=datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+    )
+    db.session.add(comment)
+    db.session.commit()
+    return jsonify({"code": 1})
 
+
+@home.route('/get/comment/')
+def get_comment():
+    data = request.args.to_dict()
+    if len(data) == 0:
+        data["page"] = 1
+        data["limit"] = 10
+    comment = Comment.query.filter_by(articleid=data["articleid"]).paginate(page=int(data["page"]), per_page=int(data["limit"]))
+    return jsonify(
+        {
+            "code": 0,
+            "msg": "获取文章",
+            "data": [
+                {"id": item.id, "time": item.time, "content": item.content,
+                 "username": item.user.username, "userimg": item.user.face,} for item in comment.items
+            ]
+        }
+    )
 
 
 # 获取文章
@@ -152,11 +180,12 @@ def get_article():
             "data": [
                 {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
                  "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
-                 "poseimg": item.poseimg,"userimg":item.user.face,
+                 "poseimg": item.poseimg, "userimg": item.user.face,
                  "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in article.items
             ]
         }
     )
+
 
 # 获取景点
 @home.route('/get/spotsite/')
@@ -207,8 +236,8 @@ def get_user():
             "msg": "获取用户",
             "count": usercount,
             "data": [
-                {"id": item.id, "username": item.username,"uuid":item.uuid,
-                 "face":item.face,"money":item.money,"rewardurl":item.rewardurl} for item in user.items
+                {"id": item.id, "username": item.username, "uuid": item.uuid,
+                 "face": item.face, "money": item.money, "rewardurl": item.rewardurl} for item in user.items
             ]
         }
     )
