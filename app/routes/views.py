@@ -6,7 +6,7 @@ from app.routes.posenet.test import Pose
 from threading import Thread
 from PIL import Image
 from flask import request, jsonify
-
+from sqlalchemy import text
 from app import db, app
 from app.models import User, Article, Spotsite
 
@@ -159,15 +159,30 @@ def get_spotsite():
         data["page"] = 1
         data["limit"] = 10
     spotsite = Spotsite.query.order_by(Spotsite.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
+    province = Spotsite.query.filter(text("SUBSTR(id,3,6) = 0 ")).all()
+    city = Spotsite.query.filter(text("SUBSTR(id,3,4) != 0 and SUBSTR(id,5,6)=0")).all()
+    ls = [{"id": item.id, "name": item.name} for item in city]
+    print(ls)
+    spot = Spotsite.query.filter(text("SUBSTR(id,5,6) != 0 ")).all()
     spotsitecount = Spotsite.query.count()
     return jsonify(
         {
             "code": 0,
             "msg": "获取景点",
             "count": spotsitecount,
+            "province": [
+                {"id": item.id, "name": item.name} for item in province
+            ],
+            "city": [
+                {"id": item.id, "name": item.name} for item in city
+            ],
+            "spot": [
+                {"id": item.id, "name": item.name} for item in spot
+            ],
             "data": [
                 {"id": item.id, "name": item.name} for item in spotsite.items
-            ]
+            ],
+
         }
     )
 
