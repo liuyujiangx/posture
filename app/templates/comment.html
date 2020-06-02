@@ -1,0 +1,92 @@
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='layui/css/layui.css')}}"/>
+<div class="layuimini-main">
+	
+
+
+	<table>
+
+		<script src="{{url_for('static',filename='layui/layui.js')}}"></script>
+		<script type="text/html" id="toolbarDemo">
+			<div class="layui-btn-container">
+				
+				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="refresh"> 刷新 </button>
+			</div>
+		</script>
+		<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+		<script>
+			layui.use(['table', 'form', 'element'], function() {
+				var table = layui.table,
+					$ = layui.jquery,
+					miniPage = layui.miniPage,
+					form = layui.form;
+
+				//第一个实例
+				table.render({
+					elem: '#currentTableId',
+					height: 480,
+					url: '{{url_for('home.get_comment')}}' //数据接口
+					,
+					page: true //开启分页
+						,
+					
+					toolbar:'#toolbarDemo',
+					cols: [
+						[ //表头
+							{
+								field: 'id',
+								title: 'ID',
+								width: 80,
+								sort: true,
+								fixed: 'left'
+							}, {
+								field: 'content',
+								title: '评论',
+								width: 200
+							},{
+								field: 'article',
+								title: '文章',
+								width: 200
+							}, 
+							{
+								field: 'username',
+								title: '用户',
+								width: 150
+							}, 
+							{
+								field: 'userimg',
+								title: '头像',
+								width: 150,
+								templet:function(d){
+                return '<div οnclick="show_img(this)" ><img src="'+d.userimg+'" alt="" width="50px" height="50px"></a></div>';
+           }
+							},
+							{
+								field: 'time',
+								title: '时间',
+								width: 80
+							}, 
+							
+						]
+					]
+				});
+				table.on('toolbar(currentTableFilter)', function(obj) {
+					if(obj.event === 'refresh') {
+						table.reload('currentTableId', {
+										page: {
+											curr: 1
+										},
+										where: {
+											key: {
+												page: 1,
+												limit: 10
+											}
+										}
+									}, 'data');
+						
+					}})
+				
+			});
+		</script>
+	</table>
+</div>

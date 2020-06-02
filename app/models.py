@@ -16,6 +16,7 @@ class Article(db.Model):
     postpoint = db.Column(db.String)  # 姿势点
     scaling = db.Column(db.String)  # 缩放比
     time = db.Column(db.String)  # 添加时间
+    comment = db.relationship("Comment", backref='article')
 
     def __repr__(self):
         return "<Spotinf %r>" % self.id
@@ -25,7 +26,7 @@ class Comment(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String)
-    articleid = db.Column(db.Integer)
+    articleid = db.Column(db.Integer,db.ForeignKey('article.id'))
     time = db.Column(db.String)
     userid = db.Column(db.Integer,db.ForeignKey('user.id'))
     def __repr__(self):

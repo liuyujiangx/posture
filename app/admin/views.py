@@ -14,7 +14,9 @@ def index():
 @admin.route('/article/')
 def article():
     return render_template('article.html')
-
+@admin.route('/comment/')
+def comment():
+    return render_template('comment.html')
 
 @admin.route('/spotsite/')
 def spotsite():

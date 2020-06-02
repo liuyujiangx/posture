@@ -147,17 +147,27 @@ def add_comment():
 @home.route('/get/comment/')
 def get_comment():
     data = request.args.to_dict()
-    if len(data) == 0:
+    if len(data) == 2:
         data["page"] = 1
         data["limit"] = 10
-        data["articleid"] = 40
-    comment = Comment.query.filter_by(articleid=data["articleid"]).paginate(page=int(data["page"]), per_page=int(data["limit"]))
+        comment = Comment.query.order_by(Comment.id.asc()).paginate(page=int(data["page"]),
+                                                                    per_page=int(data["limit"]))
+    if len(data) == 0 or len(data) == 3:
+        if len(data)==0:
+            data["page"] = 1
+            data["limit"] = 10
+            data["articleid"] = 40
+        comment = Comment.query.filter_by(articleid=data["articleid"]).paginate(page=int(data["page"]),
+                                                                            per_page=int(data["limit"]))
+    commentcount = Comment.query.count()
+
     return jsonify(
         {
             "code": 0,
             "msg": "获取评论",
+            "count": commentcount,
             "data": [
-                {"id": item.id, "time": item.time, "content": item.content,
+                {"id": item.id, "time": item.time, "content": item.content,"article":item.article.title,
                  "username": item.user.username, "userimg": item.user.face,} for item in comment.items
             ]
         }
