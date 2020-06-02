@@ -200,7 +200,8 @@ def get_user():
             "msg": "获取景点",
             "count": usercount,
             "data": [
-                {"id": item.id, "username": item.username,"uuid":item.uuid,"face":item.face,"money":item.money} for item in user.items
+                {"id": item.id, "username": item.username,"uuid":item.uuid,
+                 "face":item.face,"money":item.money,"rewardurl":item.rewardurl} for item in user.items
             ]
         }
     )

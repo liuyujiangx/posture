@@ -46,6 +46,7 @@ class User(db.Model):
     uuid = db.Column(db.String)
     money = db.Column(db.Float)
     face = db.Column(db.String)
+    rewardurl = db.Column(db.String)
     article = db.relationship("Article", backref='user')
     def __repr__(self):
         return "<Comment %r>" % self.id
