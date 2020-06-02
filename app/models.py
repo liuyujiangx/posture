@@ -26,7 +26,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String)
     articleid = db.Column(db.Integer)
-    time = db.Column(db.DateTime)
+    time = db.Column(db.String)
     userid = db.Column(db.Integer)
     def __repr__(self):
         return "<Comment %r>" % self.id

@@ -126,6 +126,13 @@ def article_add():
 
 
 
+@home.route("/add/comment/",methods=["POST"])
+def add_comment():
+    data = request.get_data()
+    data = json.loads(data)
+    print(data)
+    return jsonify({"code":1})
+
 
 
 # 获取文章
