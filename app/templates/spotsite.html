@@ -26,6 +26,7 @@
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
 				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="refresh"> 刷新 </button>
 			</div>
 		</script>
 
@@ -153,6 +154,18 @@
 }); 
 
 
+					}else if (obj.event==='refresh'){
+						table.reload('currentTableId', {
+										page: {
+											curr: 1
+										},
+										where: {
+											key: {
+												page: 1,
+												limit: 10
+											}
+										}
+									}, 'data');
 					}
 				})
 

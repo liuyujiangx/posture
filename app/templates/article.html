@@ -10,14 +10,13 @@
 		<script type="text/html" id="toolbarDemo">
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+				<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="refresh"> 刷新 </button>
 			</div>
 		</script>
 
 		<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
-		<script type="text/html" id="currentTableBar">
-			<a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
-		</script>
+		
 		<script>
 			layui.use(['table', 'form', 'element'], function() {
 				var table = layui.table,
@@ -142,6 +141,18 @@
 							}, 'json');
 							layer.close(index);
 						});
+					}else if (obj.event==='refresh'){
+						table.reload('currentTableId', {
+										page: {
+											curr: 1
+										},
+										where: {
+											key: {
+												page: 1,
+												limit: 10
+											}
+										}
+									}, 'data');
 					}
 				})
 
