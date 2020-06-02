@@ -161,8 +161,6 @@ def get_spotsite():
     spotsite = Spotsite.query.order_by(Spotsite.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
     province = Spotsite.query.filter(text("SUBSTR(id,3,6) = 0 ")).all()
     city = Spotsite.query.filter(text("SUBSTR(id,3,4) != 0 and SUBSTR(id,5,6)=0")).all()
-    ls = [{"id": item.id, "name": item.name} for item in city]
-    print(ls)
     spot = Spotsite.query.filter(text("SUBSTR(id,5,6) != 0 ")).all()
     spotsitecount = Spotsite.query.count()
     return jsonify(
