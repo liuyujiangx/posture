@@ -8,7 +8,7 @@ from PIL import Image
 from flask import request, jsonify
 
 from app import db, app
-from app.models import User, Article
+from app.models import User, Article, Spotsite
 
 from app.routes.login import Login
 from app.routes.createId import IdWorker
@@ -147,6 +147,26 @@ def get_article():
                  "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
                  "poseimg": item.poseimg,
                  "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in article.items
+            ]
+        }
+    )
+
+# 获取文章
+@home.route('/get/spotsite/')
+def get_spotsite():
+    data = request.args.to_dict()
+    if len(data) == 0:
+        data["page"] = 1
+        data["limit"] = 10
+    spotsite = Spotsite.query.order_by(Spotsite.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
+    spotsitecount = Spotsite.query.count()
+    return jsonify(
+        {
+            "code": 0,
+            "msg": "获取景点",
+            "count": spotsitecount,
+            "data": [
+                {"id": item.id, "name": item.name} for item in spotsite.items
             ]
         }
     )

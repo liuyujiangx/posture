@@ -12,6 +12,11 @@ def article():
     return render_template('article.html')
 
 
+@admin.route('/spotsite/')
+def spotsite():
+    return render_template('spotsite.html')
+
+
 @admin.route('/article/delete/')
 def article_delete():
     data = request.form.to_dict()

@@ -28,70 +28,22 @@
 				table.render({
 					elem: '#demo',
 					height: 480,
-					url: '{{url_for('home.get_article')}}',
-					page: true ,//开启分页
-					toolbar:true,
+					url: '{{url_for('home.get_spotsite')}}' //数据接口
+					,
+					page: true //开启分页
+						,
 					cols: [
 						[ //表头
 							{
 								field: 'id',
 								title: 'ID',
-								width: 80,
+								width: 150,
 								sort: true,
 								fixed: 'left'
 							}, {
-								field: 'title',
-								title: '标题',
-								width: 80
-							}, {
-								field: 'content',
-								title: '内容',
-								width: 80
-							}, {
-								field: 'img',
-								title: '图片',
-								width: 80,
-								templet: proofurl
-							}, {
-								field: 'keyword',
-								title: '关键词',
-								width: 177
-							}, {
-								field: 'spotid',
-								title: '景点名',
-								width: 100,
-								sort: true
-							}, {
-								field: 'userid',
-								title: '用户名',
-								width: 100,
-								sort: true
-							}, {
-								field: 'good',
-								title: '点赞数',
-								width: 80
-							}, {
-								field: 'weather',
-								title: '天气',
-								width: 80
-							}, {
-								field: 'time',
-								title: '添加时间',
-								width: 135,
-								sort: true
-							}, {
-								field: 'postpoint',
-								title: '姿势点',
-								width: 135
-							}, {
-								field: 'scaling',
-								title: '缩放比',
-								width: 80
-							}, {
-								field: 'poseimg',
-								title: '姿势图',
-								width: 80,
-								templet: proofurl2
+								field: 'name',
+								title: '景点',
+								width: 150
 							}, {
 								title: '操作',
 								width: 80,
@@ -101,15 +53,6 @@
 						]
 					]
 				});
-
-				function proofurl(d) {
-					var proofurl = d.img;
-					return "<a target='_Blank' class='layui-blue' href='" + proofurl + "'>链接</a>"
-				};
-				function proofurl2(d) {
-					var proofurl = d.poseimg;
-					return "<a target='_Blank' class='layui-blue' href='" + proofurl + "'>链接</a>"
-				};
 				table.on('toolbar(currentTableFilter)', function(obj) {
 					if(obj.event === 'add') { // 监听添加操作
 						var content = miniPage.getHrefContent('{{url_for('home.get_article')}}');
