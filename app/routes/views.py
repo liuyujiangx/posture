@@ -215,27 +215,29 @@ def get_article():
 def get_spotsite():
     data = request.args.to_dict()
     if len(data) == 0:
-        data["page"] = 1
-        data["limit"] = 10
+        province = Spotsite.query.filter(text("SUBSTR(id,3,6) = 0 ")).all()
+        city = Spotsite.query.filter(text("SUBSTR(id,3,4) != 0 and SUBSTR(id,5,6)=0")).all()
+        spot = Spotsite.query.filter(text("SUBSTR(id,5,6) != 0 ")).all()
+        return jsonify({
+            "code":0,
+            "msg":"获取景点",
+            "province": [
+                {item.id:item.name} for item in province
+            ],
+            "city": [
+                {item.id:item.name} for item in city
+            ],
+            "spot": [
+                {item.id:item.name} for item in spot
+            ],
+        })
     spotsite = Spotsite.query.order_by(Spotsite.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
-    province = Spotsite.query.filter(text("SUBSTR(id,3,6) = 0 ")).all()
-    city = Spotsite.query.filter(text("SUBSTR(id,3,4) != 0 and SUBSTR(id,5,6)=0")).all()
-    spot = Spotsite.query.filter(text("SUBSTR(id,5,6) != 0 ")).all()
     spotsitecount = Spotsite.query.count()
     return jsonify(
         {
             "code": 0,
             "msg": "获取景点",
             "count": spotsitecount,
-            "province": [
-                {"id": item.id, "name": item.name} for item in province
-            ],
-            "city": [
-                {"id": item.id, "name": item.name} for item in city
-            ],
-            "spot": [
-                {"id": item.id, "name": item.name} for item in spot
-            ],
             "data": [
                 {"id": item.id, "name": item.name} for item in spotsite.items
             ],
