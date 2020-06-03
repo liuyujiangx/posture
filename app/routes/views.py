@@ -290,6 +290,7 @@ def search():
     article_title = Article.query.filter(Article.title.like("%" + data + "%") if data is not None else "").all()
     article_keyword = Article.query.filter(Article.keyword.like("%" + data + "%") if data is not None else "").all()
     article_weather = Article.query.filter(Article.weather.like("%" + data + "%") if data is not None else "").all()
+    spotsite = Spotsite.query.filter(Spotsite.name.like("%" + data + "%") if data is not None else "").all()
     s = set()
     for i in article_title:
         s.add(i)
@@ -297,6 +298,11 @@ def search():
         s.add(i)
     for i in article_weather:
         s.add(i)
+    if spotsite:
+        for x in spotsite:
+            item = Article.query.filter_by(spotid=x.id).first()
+            if item is not None:
+                s.add(item)
     res=[
         {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
          "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
