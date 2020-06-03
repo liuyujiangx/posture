@@ -162,6 +162,8 @@ def get_comment():
         comment = Comment.query.filter_by(articleid=data["articleid"]).order_by(Comment.id.desc()).paginate(
             page=int(data["page"]),
             per_page=int(data["limit"]))
+    else:
+        comment = Comment.query.paginate(page=1,per_page=100)
     commentcount = Comment.query.count()
 
     return jsonify(
