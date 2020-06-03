@@ -163,7 +163,7 @@ def get_comment():
             page=int(data["page"]),
             per_page=int(data["limit"]))
     else:
-        comment = Comment.query.paginate(page=1,per_page=100)
+        comment = Comment.query.paginate(page=1, per_page=100)
     commentcount = Comment.query.count()
 
     return jsonify(
@@ -228,8 +228,8 @@ def get_spotsite():
         for i in city:
             city_data[i.id] = i.name
         return jsonify({
-            "code":0,
-            "msg":"获取景点",
+            "code": 0,
+            "msg": "获取景点",
             "province": province_data,
             "city": city_data,
             "spot": spot_data,
@@ -270,16 +270,16 @@ def get_user():
         }
     )
 
+
+# 点赞
 @home.route('/good/')
 def good():
     data = request.args.to_dict()
-    article = Article.query.filter_by(id = data["id"]).first()
-    article.good+=1
+    article = Article.query.filter_by(id=data["id"]).first()
+    article.good += 1
     db.session.add(article)
     db.session.commit()
-    return jsonify({"code":1,"msg":"点赞成功"})
-
-
+    return jsonify({"good": article.good, "msg": "点赞成功"})
 
 # 多线程
 # def async_slow_function(file_path, filename, num):
