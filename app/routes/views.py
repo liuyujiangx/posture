@@ -187,8 +187,15 @@ def get_article():
     if len(data) == 0:
         data["page"] = 1
         data["limit"] = 10
-    article = Article.query.order_by(Article.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
     articlecount = Article.query.count()
+    if (int(data["page"]) - 1) * int(data["limit"]) + 1 > articlecount:
+        return jsonify({
+            "code": 0,
+            "msg": "获取文章",
+            "count": articlecount,
+            "data": []
+        })
+    article = Article.query.order_by(Article.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
     return jsonify(
         {
             "code": 0,
