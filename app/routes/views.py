@@ -218,18 +218,21 @@ def get_spotsite():
         province = Spotsite.query.filter(text("SUBSTR(id,3,6) = 0 ")).all()
         city = Spotsite.query.filter(text("SUBSTR(id,3,4) != 0 and SUBSTR(id,5,6)=0")).all()
         spot = Spotsite.query.filter(text("SUBSTR(id,5,6) != 0 ")).all()
+        spot_data = {}
+        city_data = {}
+        province_data = {}
+        for i in province:
+            province_data[i.id] = i.name
+        for i in spot:
+            spot_data[i.id] = i.name
+        for i in city:
+            city_data[i.id] = i.name
         return jsonify({
             "code":0,
             "msg":"获取景点",
-            "province": [
-                {item.id:item.name} for item in province
-            ],
-            "city": [
-                {item.id:item.name} for item in city
-            ],
-            "spot": [
-                {item.id:item.name} for item in spot
-            ],
+            "province": spot_data,
+            "city": city_data,
+            "spot": province_data,
         })
     spotsite = Spotsite.query.order_by(Spotsite.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
     spotsitecount = Spotsite.query.count()
