@@ -318,7 +318,22 @@ def search():
 
         }
     )
-
+@home.route('/get/weather/')
+def get_weather():
+    data = request.args.to_dict()
+    article = Article.query.filter_by(weather=data["weather"]).all()
+    return jsonify(
+        {
+            "code": 0,
+            "msg": "按天气获取文章",
+            "data": [
+                {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
+                 "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
+                 "poseimg": item.poseimg, "userimg": item.user.face,
+                 "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in article
+            ]
+        }
+    )
 # 多线程
 # def async_slow_function(file_path, filename, num):
 #     thr = Thread(target=change, args=[file_path, filename, num])
