@@ -132,7 +132,7 @@ def add_comment():
     data = request.get_data()
     data = json.loads(data)
     print(data)
-    user = User.query.filter_by(uuid = data["userid"]).first()
+    user = User.query.filter_by(uuid=data["userid"]).first()
     comment = Comment(
         content=data["content"],
         articleid=data["articleid"],
@@ -152,15 +152,16 @@ def get_comment():
                                                                     per_page=int(data["limit"]))
     if len(data) == 3:
         count = Comment.query.filter_by(articleid=data["articleid"]).count()
-        if (int(data["page"])-1)*int(data["limit"])+1>count:
+        if (int(data["page"]) - 1) * int(data["limit"]) + 1 > count:
             return jsonify({
-                "code":0,
-                "msg":"获取评论",
-                "count":count,
-                "data":[]
+                "code": 0,
+                "msg": "获取评论",
+                "count": count,
+                "data": []
             })
-        comment = Comment.query.filter_by(articleid=data["articleid"]).order_by(Comment.id.desc()).paginate(page=int(data["page"]),
-                                                                            per_page=int(data["limit"]))
+        comment = Comment.query.filter_by(articleid=data["articleid"]).order_by(Comment.id.desc()).paginate(
+            page=int(data["page"]),
+            per_page=int(data["limit"]))
     commentcount = Comment.query.count()
 
     return jsonify(
@@ -169,8 +170,8 @@ def get_comment():
             "msg": "获取评论",
             "count": commentcount,
             "data": [
-                {"id": item.id, "time": item.time, "content": item.content,"article":item.article.title,
-                 "username": item.user.username, "userimg": item.user.face,} for item in comment.items
+                {"id": item.id, "time": item.time, "content": item.content, "article": item.article.title,
+                 "username": item.user.username, "userimg": item.user.face, } for item in comment.items
             ]
         }
     )
