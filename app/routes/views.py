@@ -230,9 +230,9 @@ def get_spotsite():
         return jsonify({
             "code":0,
             "msg":"获取景点",
-            "province": spot_data,
+            "province": province_data,
             "city": city_data,
-            "spot": province_data,
+            "spot": spot_data,
         })
     spotsite = Spotsite.query.order_by(Spotsite.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
     spotsitecount = Spotsite.query.count()
