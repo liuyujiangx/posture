@@ -156,7 +156,6 @@ def get_comment():
             data["limit"] = 10
             data["articleid"] = 40
         count = Comment.query.filter_by(articleid=data["articleid"]).count()
-        print(count)
         if (int(data["page"])-1)*int(data["limit"])+1>count:
             return jsonify({
                 "code":0,
