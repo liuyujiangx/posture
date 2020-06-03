@@ -147,14 +147,10 @@ def add_comment():
 @home.route('/get/comment/')
 def get_comment():
     data = request.args.to_dict()
-    if len(data) == 2:
+    if len(data) == 2 or len(data) == 4:
         comment = Comment.query.order_by(Comment.id.asc()).paginate(page=int(data["page"]),
                                                                     per_page=int(data["limit"]))
-    if len(data) == 0 or len(data) == 3:
-        if len(data)==0:
-            data["page"] = 1
-            data["limit"] = 10
-            data["articleid"] = 40
+    if len(data) == 3:
         count = Comment.query.filter_by(articleid=data["articleid"]).count()
         if (int(data["page"])-1)*int(data["limit"])+1>count:
             return jsonify({
