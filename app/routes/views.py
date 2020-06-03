@@ -270,6 +270,17 @@ def get_user():
         }
     )
 
+@home.route('/good/')
+def good():
+    data = request.args.to_dict()
+    article = Article.query.filter_by(id = data["id"]).first()
+    article.good+=1
+    db.session.add(article)
+    db.session.commit()
+    return jsonify({"code":1,"msg":"点赞成功"})
+
+
+
 # 多线程
 # def async_slow_function(file_path, filename, num):
 #     thr = Thread(target=change, args=[file_path, filename, num])
