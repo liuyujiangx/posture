@@ -194,7 +194,7 @@ def get_article():
             "count": articlecount,
             "data": []
         })
-    article = Article.query.order_by(Article.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
+    article = Article.query.order_by(Article.id.desc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
     return jsonify(
         {
             "code": 0,
