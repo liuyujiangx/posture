@@ -19,7 +19,7 @@ class Article(db.Model):
     comment = db.relationship("Comment", backref='article')
 
     def __repr__(self):
-        return "<Spotinf %r>" % self.id
+        return "<Article %r>" % self.title
 
 
 class Comment(db.Model):

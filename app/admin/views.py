@@ -1,7 +1,7 @@
 import json
 
 from app import db
-from app.models import Article, Spotsite
+from app.models import Article, Spotsite, Comment
 from . import admin
 from flask import render_template, request, jsonify
 
@@ -31,6 +31,10 @@ def article_delete():
     data = json.loads(data)
     for i in data["data"]:
         article = Article.query.filter_by(id=i["id"]).first()
+        comment_list = Comment.query.filter_by(articleid = article.id).all()
+        for comment in comment_list:
+            db.session.delete(comment)
+            db.session.commit()
         db.session.delete(article)
         db.session.commit()
 

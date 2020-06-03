@@ -281,6 +281,38 @@ def good():
     db.session.commit()
     return jsonify({"good": article.good, "msg": "点赞成功"})
 
+
+# 搜索
+@home.route('/search/')
+def search():
+    data = request.args.to_dict()
+    data = data['data']
+    article_title = Article.query.filter(Article.title.like("%" + data + "%") if data is not None else "").all()
+    article_keyword = Article.query.filter(Article.keyword.like("%" + data + "%") if data is not None else "").all()
+    article_weather = Article.query.filter(Article.weather.like("%" + data + "%") if data is not None else "").all()
+    s = set()
+    for i in article_title:
+        s.add(i)
+    for i in article_keyword:
+        s.add(i)
+    for i in article_weather:
+        s.add(i)
+    res=[
+        {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
+         "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
+         "poseimg": item.poseimg, "userimg": item.user.face,
+         "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in s
+    ]
+
+    return jsonify(
+        {
+            "code": 0,
+            "msg": "搜索文章",
+            "data": res
+
+        }
+    )
+
 # 多线程
 # def async_slow_function(file_path, filename, num):
 #     thr = Thread(target=change, args=[file_path, filename, num])
