@@ -28,6 +28,7 @@ class Comment(db.Model):
     content = db.Column(db.String)
     articleid = db.Column(db.Integer,db.ForeignKey('article.id'))
     time = db.Column(db.String)
+    read = db.Column(db.Integer)
     userid = db.Column(db.Integer,db.ForeignKey('user.id'))
     def __repr__(self):
         return "<Comment %r>" % self.id

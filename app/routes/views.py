@@ -138,6 +138,7 @@ def add_comment():
         articleid=data["articleid"],
         userid=user.id,
         time=datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+        read=0,
     )
     db.session.add(comment)
     db.session.commit()
@@ -340,11 +341,13 @@ def get_weather():
             ]
         }
     )
+
+
 @home.route('/user/article/')
 def user_article():
     data = request.args.to_dict()
     user = User.query.filter_by(uuid=data["userid"]).first()
-    article = Article.query.filter_by(userid = user.id).all()
+    article = Article.query.filter_by(userid=user.id).all()
     return jsonify(
         {
             "code": 0,
@@ -374,14 +377,15 @@ def article_del():
         "info": "删除成功"
     })
 
-@home.route('/article/update/',methods=["POST"])
+
+@home.route('/article/update/', methods=["POST"])
 def article_update():
     data = request.get_data()
     data = json.loads(data)
     print(data)
     article = data["article"]
     spotsite = Spotsite.query.filter_by(name=article["spotname"]).first()
-    articles = Article.query.filter_by(id = article['id']).first()
+    articles = Article.query.filter_by(id=article['id']).first()
     articles.title = article['title']
     articles.content = article['content']
     articles.keyword = article['keyword']
@@ -391,13 +395,62 @@ def article_update():
     db.session.commit()
     return jsonify(data)
 
+
+
+@home.route('/user/comment/')
+def user_comment():
+    data = request.args.to_dict()
+    user = User.query.filter_by(uuid=data['userid']).first()
+    article = Article.query.filter_by(userid=user.id).all()
+    ls = []
+    for i in article:
+        comment = Comment.query.filter_by(articleid=i.id).all()
+        for j in comment:
+            ls.append(j)
+    return jsonify(
+        {
+            "code": 0,
+            "msg": "获取该用户所有文章的评论",
+            "data": [
+                {"id": item.id, "time": item.time, "content": item.content, "article": item.article.title,
+                 "username": item.user.username, "userimg": item.user.face,"read":item.read } for item in ls
+            ]
+        }
+    )
+
+@home.route('/read/comment/',methods=["POST"])
+def read_comment():
+    data = request.get_data()
+    data=json.loads(data)
+    for i in data["data"]:
+        comment = Comment.query.filter_by(id=i).first()
+        comment.read=1
+        db.session.add(comment)
+        db.session.commit()
+    return jsonify({
+        "code":1,
+        "msg":"点击已读评论"
+    })
+
+@home.route('/unread/')
+def unread():
+    data = request.args.to_dict()
+    user = User.query.filter_by(uuid=data['userid']).first()
+    article = Article.query.filter_by(userid=user.id).all()
+    count = 0
+    for i in article:
+        comment = Comment.query.filter(Comment.articleid==i.id,Comment.read==0).count()
+        count+=comment
+    return jsonify({
+        "code":1,
+        "unread":count
+    })
+
 '''
 {'article': {'title': '洛带古镇打卡', 'content': '古老的城楼古堡是个打卡的好地方
 ,欢迎评论交流', 'keyword': '站立', 'spotname': '欢乐谷', 'weather': '晴天', 'use
 rid': 'ov7vI5SY49ssAlJU32azqnLQAgfw'}}
 '''
-
-
 
 # 多线程
 # def async_slow_function(file_path, filename, num):
