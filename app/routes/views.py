@@ -382,10 +382,10 @@ def article_update():
     article = data["article"]
     spotsite = Spotsite.query.filter_by(name=article["spotname"]).first()
     articles = Article.query.filter_by(id = article['id']).first()
-    articles.title = article.title
-    articles.content = article.content
-    articles.keyword = article.keyword
-    articles.weather = article.weather
+    articles.title = article['title']
+    articles.content = article['content']
+    articles.keyword = article['keyword']
+    articles.weather = article['weather']
     articles.spotid = spotsite.id
     db.session.add(articles)
     db.session.commit()
