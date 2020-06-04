@@ -174,7 +174,7 @@ def get_comment():
             "count": commentcount,
             "data": [
                 {"id": item.id, "time": item.time, "content": item.content, "article": item.article.title,
-                 "username": item.user.username, "userimg": item.user.face, } for item in comment.items
+                 "username": item.user.username, "userimg": item.user.face,"read":item.read } for item in comment.items
             ]
         }
     )

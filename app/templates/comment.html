@@ -62,6 +62,23 @@
            }
 							},
 							{
+								field: 'read',
+								title: '是否已读',
+								width: 80,
+								templet:function(d){
+									var t = d.read;
+									console.log(t)
+//									t = Number(t);
+
+									if(t==0){
+										return "未读";
+									}
+									if(t==1){
+										return "已读";
+									}
+								}
+							},
+							{
 								field: 'time',
 								title: '时间',
 								width: 80
