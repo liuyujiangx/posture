@@ -396,7 +396,7 @@ def article_update():
     return jsonify(data)
 
 
-
+# 获取该用户所有文章的评论
 @home.route('/user/comment/')
 def user_comment():
     data = request.args.to_dict()
@@ -404,34 +404,40 @@ def user_comment():
     article = Article.query.filter_by(userid=user.id).all()
     ls = []
     for i in article:
-        comment = Comment.query.filter_by(articleid=i.id).all()
+        comment = Comment.query.filter_by(articleid=i.id).order_by(Comment.read.asc()).all()
         for j in comment:
             ls.append(j)
+    res = [
+                {"id": item.id, "time": item.time, "content": item.content, "article": item.article.title,
+                 "username": item.user.username, "userimg": item.user.face, "read": item.read} for item in ls
+            ]
+    res = sorted(res,key=lambda item:(item['read'],-item['id']))#未读在前面然后按时间排序
     return jsonify(
         {
             "code": 0,
             "msg": "获取该用户所有文章的评论",
-            "data": [
-                {"id": item.id, "time": item.time, "content": item.content, "article": item.article.title,
-                 "username": item.user.username, "userimg": item.user.face,"read":item.read } for item in ls
-            ]
+            "data": res
         }
     )
 
-@home.route('/read/comment/',methods=["POST"])
+
+# 已读评论
+@home.route('/read/comment/', methods=["POST"])
 def read_comment():
     data = request.get_data()
-    data=json.loads(data)
+    data = json.loads(data)
     for i in data["data"]:
         comment = Comment.query.filter_by(id=i).first()
-        comment.read=1
+        comment.read = 1
         db.session.add(comment)
         db.session.commit()
     return jsonify({
-        "code":1,
-        "msg":"点击已读评论"
+        "code": 1,
+        "msg": "点击已读评论"
     })
 
+
+# 获取该用户所有文章评论未读数量
 @home.route('/unread/')
 def unread():
     data = request.args.to_dict()
@@ -439,11 +445,43 @@ def unread():
     article = Article.query.filter_by(userid=user.id).all()
     count = 0
     for i in article:
-        comment = Comment.query.filter(Comment.articleid==i.id,Comment.read==0).count()
-        count+=comment
+        comment = Comment.query.filter(Comment.articleid == i.id, Comment.read == 0).count()
+        count += comment
+    return jsonify({
+        "code": 1,
+        "unread": count
+    })
+
+
+@home.route('/qr/upload/', methods=['POST'])
+def qr_upload():
+    img = request.files['imgfile']
+    data = request.form.to_dict()
+    if img is not None and data is not None:
+        user = User.query.filter_by(uuid=data["userid"]).first()
+        img_filename = change_filename(img.filename)  # 更改图片名称
+        img_filename = user.id+"-"+img_filename
+        save_url = app.config["UP_DIR"] + "upload/" + img_filename  # 图片保存地址
+        img.save(save_url)  # 保存图片
+        user.rewardurl = "http://www.yujl.top:5052/upload/" + img_filename
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({
+            "code":1,
+            "msg":"添加成功"
+        })
+    return jsonify({
+        "code":-1,
+        "msg":"请求数据为空"
+    })
+@home.route('/get/qr/')
+def get_qr():
+    data = request.args.to_dict()
+    user=User.query.filter_by(uuid=data['userid']).first()
     return jsonify({
         "code":1,
-        "unread":count
+        "msg":"获取用户二维码",
+        "data":user.rewardurl
     })
 
 '''
@@ -451,6 +489,10 @@ def unread():
 ,欢迎评论交流', 'keyword': '站立', 'spotname': '欢乐谷', 'weather': '晴天', 'use
 rid': 'ov7vI5SY49ssAlJU32azqnLQAgfw'}}
 '''
+
+
+
+
 
 # 多线程
 # def async_slow_function(file_path, filename, num):
