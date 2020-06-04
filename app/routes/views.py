@@ -379,7 +379,26 @@ def article_update():
     data = request.get_data()
     data = json.loads(data)
     print(data)
+    article = data["article"]
+    spotsite = Spotsite.query.filter_by(name=article["spotname"]).first()
+    articles = Article.query.filter_by(id = article['id']).first()
+    articles.title = article.title
+    articles.content = article.content
+    articles.keyword = article.keyword
+    articles.weather = article.weather
+    articles.spotid = spotsite.id
+    db.session.add(articles)
+    db.session.commit()
     return jsonify(data)
+
+'''
+{'article': {'title': '洛带古镇打卡', 'content': '古老的城楼古堡是个打卡的好地方
+,欢迎评论交流', 'keyword': '站立', 'spotname': '欢乐谷', 'weather': '晴天', 'use
+rid': 'ov7vI5SY49ssAlJU32azqnLQAgfw'}}
+'''
+
+
+
 # 多线程
 # def async_slow_function(file_path, filename, num):
 #     thr = Thread(target=change, args=[file_path, filename, num])
