@@ -151,7 +151,7 @@ def get_comment():
     if len(data) == 2 or len(data) == 4:  # 后台管理用的返回值
         comment = Comment.query.order_by(Comment.id.asc()).paginate(page=int(data["page"]),
                                                                     per_page=int(data["limit"]))
-    if len(data) == 3:  # 小程序用的返回值
+    elif len(data) == 3:  # 小程序用的返回值
         count = Comment.query.filter_by(articleid=data["articleid"]).count()
         if (int(data["page"]) - 1) * int(data["limit"]) + 1 > count:  # 请求的页数超过数据量就返回空数组
             return jsonify({
@@ -234,7 +234,7 @@ def get_spotsite():
             "province": province_data,
             "city": city_data,
             "spot": spot_data,
-        })
+            })
     spotsite = Spotsite.query.order_by(Spotsite.id.asc()).paginate(page=int(data["page"]), per_page=int(data["limit"]))
     spotsitecount = Spotsite.query.count()
     return jsonify(
