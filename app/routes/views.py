@@ -357,6 +357,22 @@ def user_article():
             ]
         }
     )
+
+
+@home.route('/article/delete/')
+def article_del():
+    data = request.args.to_dict()
+    article = Article.query.filter_by(id=data["articleid"]).first()
+    comment_list = Comment.query.filter_by(articleid=article.id).all()
+    for comment in comment_list:
+        db.session.delete(comment)
+        db.session.commit()
+    db.session.delete(article)
+    db.session.commit()
+    return jsonify({
+        "code": 1,
+        "info": "删除成功"
+    })
 # 多线程
 # def async_slow_function(file_path, filename, num):
 #     thr = Thread(target=change, args=[file_path, filename, num])
