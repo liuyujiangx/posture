@@ -39,7 +39,7 @@ def login():
     log.set(res['code'])
     openid = log.sent_out()
     usercount = User.query.filter_by(uuid=openid['openid']).count()
-    if usercount != 1:
+    if usercount != 1:  # 如果当前用户没有登录过就存进数据库
         user = User(
             username=res['userName'],
             face=res['userUrl'],
@@ -58,10 +58,11 @@ pose = Pose()
 @home.route('/posenet/', methods=["POST"])
 def posenet():
     img = request.files["imgfile"]
-    imgname = change_filename(img.filename)
+    imgname = change_filename(img.filename)  # 更改名称
     img.save(app.config["UP_DIR"] + "upload/" + imgname)
     zoom(app.config["UP_DIR"] + "upload/" + imgname, app.config["UP_DIR"] + "upload/" + imgname)  # 压缩图片
-    dic = pose.pose(app.config["UP_DIR"] + "upload/" + imgname, app.config["UP_DIR"] + "upload/" + "posture" + imgname)
+    dic = pose.pose(app.config["UP_DIR"] + "upload/" + imgname,
+                    app.config["UP_DIR"] + "upload/" + "posture" + imgname)  # 调用姿势文件
     return jsonify({
         "dic": dic,
         "img_url": "http://www.yujl.top:5052/upload/" + imgname,
@@ -101,7 +102,7 @@ def article_upload():
     return jsonify({"code": 1})
 
 
-# 文章上传
+# 无图文章上传
 @home.route('/article/add/', methods=['POST'])
 def article_add():
     data = request.get_data()
@@ -131,7 +132,6 @@ def article_add():
 def add_comment():
     data = request.get_data()
     data = json.loads(data)
-    print(data)
     user = User.query.filter_by(uuid=data["userid"]).first()
     comment = Comment(
         content=data["content"],
@@ -147,12 +147,12 @@ def add_comment():
 @home.route('/get/comment/')
 def get_comment():
     data = request.args.to_dict()
-    if len(data) == 2 or len(data) == 4:
+    if len(data) == 2 or len(data) == 4:  # 后台管理用的返回值
         comment = Comment.query.order_by(Comment.id.asc()).paginate(page=int(data["page"]),
                                                                     per_page=int(data["limit"]))
-    if len(data) == 3:
+    if len(data) == 3:  # 小程序用的返回值
         count = Comment.query.filter_by(articleid=data["articleid"]).count()
-        if (int(data["page"]) - 1) * int(data["limit"]) + 1 > count:
+        if (int(data["page"]) - 1) * int(data["limit"]) + 1 > count:  # 请求的页数超过数据量就返回空数组
             return jsonify({
                 "code": 0,
                 "msg": "获取评论",
@@ -214,7 +214,7 @@ def get_article():
 @home.route('/get/spotsite/')
 def get_spotsite():
     data = request.args.to_dict()
-    if len(data) == 0:
+    if len(data) == 0:  # 小程序按分类获取景点或地点
         province = Spotsite.query.filter(text("SUBSTR(id,3,6) = 0 ")).all()
         city = Spotsite.query.filter(text("SUBSTR(id,3,4) != 0 and SUBSTR(id,5,6)=0")).all()
         spot = Spotsite.query.filter(text("SUBSTR(id,5,6) != 0 ")).all()
@@ -287,10 +287,13 @@ def good():
 def search():
     data = request.args.to_dict()
     data = data['data']
-    article_title = Article.query.filter(Article.title.like("%" + data + "%") if data is not None else "").all()
-    article_keyword = Article.query.filter(Article.keyword.like("%" + data + "%") if data is not None else "").all()
-    article_weather = Article.query.filter(Article.weather.like("%" + data + "%") if data is not None else "").all()
-    spotsite = Spotsite.query.filter(Spotsite.name.like("%" + data + "%") if data is not None else "").all()
+    article_title = Article.query.filter(
+        Article.title.like("%" + data + "%") if data is not None else "").all()  # 跟标题相关的
+    article_keyword = Article.query.filter(
+        Article.keyword.like("%" + data + "%") if data is not None else "").all()  # 跟关键词相关的
+    article_weather = Article.query.filter(
+        Article.weather.like("%" + data + "%") if data is not None else "").all()  # 跟天气相关的
+    spotsite = Spotsite.query.filter(Spotsite.name.like("%" + data + "%") if data is not None else "").first()  # 查询地点
     s = set()
     for i in article_title:
         s.add(i)
@@ -299,11 +302,11 @@ def search():
     for i in article_weather:
         s.add(i)
     if spotsite:
-        for x in spotsite:
-            item = Article.query.filter_by(spotid=x.id).first()
-            if item is not None:
-                s.add(item)
-    res=[
+        item = Article.query.filter_by(spotid=spotsite.id).all()
+        if item is not None:
+            for i in item:
+                s.add(i)
+    res = [
         {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
          "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
          "poseimg": item.poseimg, "userimg": item.user.face,
@@ -318,6 +321,9 @@ def search():
 
         }
     )
+
+
+# 按天气分类获取文章
 @home.route('/get/weather/')
 def get_weather():
     data = request.args.to_dict()
