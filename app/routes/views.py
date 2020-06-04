@@ -408,10 +408,10 @@ def user_comment():
         for j in comment:
             ls.append(j)
     res = [
-                {"id": item.id, "time": item.time, "content": item.content, "article": item.article.title,
-                 "username": item.user.username, "userimg": item.user.face, "read": item.read} for item in ls
-            ]
-    res = sorted(res,key=lambda item:(item['read'],-item['id']))#未读在前面然后按时间排序
+        {"id": item.id, "time": item.time, "content": item.content, "article": item.article.title,
+         "username": item.user.username, "userimg": item.user.face, "read": item.read} for item in ls
+    ]
+    res = sorted(res, key=lambda item: (item['read'], -item['id']))  # 未读在前面然后按时间排序
     return jsonify(
         {
             "code": 0,
@@ -460,39 +460,38 @@ def qr_upload():
     if img is not None and data is not None:
         user = User.query.filter_by(uuid=data["userid"]).first()
         img_filename = change_filename(img.filename)  # 更改图片名称
-        img_filename = user.id+"-"+img_filename
+        img_filename = str(user.id) + "-" + img_filename
         save_url = app.config["UP_DIR"] + "upload/" + img_filename  # 图片保存地址
         img.save(save_url)  # 保存图片
         user.rewardurl = "http://www.yujl.top:5052/upload/" + img_filename
         db.session.add(user)
         db.session.commit()
         return jsonify({
-            "code":1,
-            "msg":"添加成功"
+            "code": 1,
+            "msg": "添加成功"
         })
     return jsonify({
-        "code":-1,
-        "msg":"请求数据为空"
+        "code": -1,
+        "msg": "请求数据为空"
     })
+
+
 @home.route('/get/qr/')
 def get_qr():
     data = request.args.to_dict()
-    user=User.query.filter_by(uuid=data['userid']).first()
+    user = User.query.filter_by(uuid=data['userid']).first()
     return jsonify({
-        "code":1,
-        "msg":"获取用户二维码",
-        "data":user.rewardurl
+        "code": 1,
+        "msg": "获取用户二维码",
+        "data": user.rewardurl
     })
+
 
 '''
 {'article': {'title': '洛带古镇打卡', 'content': '古老的城楼古堡是个打卡的好地方
 ,欢迎评论交流', 'keyword': '站立', 'spotname': '欢乐谷', 'weather': '晴天', 'use
 rid': 'ov7vI5SY49ssAlJU32azqnLQAgfw'}}
 '''
-
-
-
-
 
 # 多线程
 # def async_slow_function(file_path, filename, num):
