@@ -373,6 +373,13 @@ def article_del():
         "code": 1,
         "info": "删除成功"
     })
+
+@home.route('/article/update/',methods=["POST"])
+def article_update():
+    data = request.get_data()
+    data = json.loads(data)
+    print(data)
+    return jsonify(data)
 # 多线程
 # def async_slow_function(file_path, filename, num):
 #     thr = Thread(target=change, args=[file_path, filename, num])
