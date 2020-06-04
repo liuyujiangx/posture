@@ -204,7 +204,7 @@ def get_article():
             "data": [
                 {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
                  "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
-                 "poseimg": item.poseimg, "userimg": item.user.face,
+                 "poseimg": item.poseimg, "userimg": item.user.face,"rewardurl":item.user.rewardurl,
                  "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in article.items
             ]
         }
@@ -310,7 +310,7 @@ def search():
     res = [
         {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
          "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
-         "poseimg": item.poseimg, "userimg": item.user.face,
+         "poseimg": item.poseimg, "userimg": item.user.face,"rewardurl":item.user.rewardurl,
          "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in s
     ]
 
@@ -336,7 +336,7 @@ def get_weather():
             "data": [
                 {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
                  "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
-                 "poseimg": item.poseimg, "userimg": item.user.face,
+                 "poseimg": item.poseimg, "userimg": item.user.face,"rewardurl":item.user.rewardurl,
                  "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in article
             ]
         }
@@ -355,7 +355,7 @@ def user_article():
             "data": [
                 {"id": item.id, "title": item.title, "content": item.content, "img": item.img, "keyword": item.keyword,
                  "spotid": item.spotsite.name, "userid": item.user.username, "good": item.good, "weather": item.weather,
-                 "poseimg": item.poseimg, "userimg": item.user.face,
+                 "poseimg": item.poseimg, "userimg": item.user.face,"rewardurl":item.user.rewardurl,
                  "postpoint": item.postpoint, "scaling": item.scaling, "time": item.time} for item in article
             ]
         }
