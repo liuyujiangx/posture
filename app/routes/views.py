@@ -480,11 +480,15 @@ def qr_upload():
 def get_qr():
     data = request.args.to_dict()
     user = User.query.filter_by(uuid=data['userid']).first()
+    if user.rewardurl is None:
+        return jsonify({})
     return jsonify({
-        "code": 1,
-        "msg": "获取用户二维码",
-        "data": user.rewardurl
+        "reward": user.rewardurl
     })
+
+
+
+
 
 
 '''
